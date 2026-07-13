@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     #apps
     'apps.users',
     'apps.doctors',
+    'apps.departments',
 
 ]
 
