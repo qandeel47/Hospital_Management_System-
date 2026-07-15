@@ -13,18 +13,12 @@ class RegisterSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
     hospital_id = serializers.CharField(write_only=True)
 
-    role = serializers.ChoiceField(
-        choices=[
-            User.RoleChoices.DOCTOR,
-            User.RoleChoices.RECEPTIONIST,
-        ]
-    )
+    role = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
 
         fields = (
-            "role",
             "username",
             "email",
             "password",
@@ -32,6 +26,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "phone_number",
             "gender",
             "hospital_id",
+            "role",
         )
 
         extra_kwargs = {
@@ -39,6 +34,22 @@ class RegisterSerializer(serializers.ModelSerializer):
                 "write_only": True
             }
         }
+
+    def validate_role(self, value):
+
+        role = value.upper()
+
+        valid_roles = [
+            User.RoleChoices.DOCTOR,
+            User.RoleChoices.RECEPTIONIST,
+        ]
+
+        if role not in valid_roles:
+            raise serializers.ValidationError(
+                "Role must be DOCTOR or RECEPTIONIST."
+            )
+
+        return role
 
     def validate(self, attrs):
 
